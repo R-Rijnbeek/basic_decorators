@@ -1,6 +1,6 @@
 # python_decorator_methods
 
-Some usefull decorators that you can use for defferent purposes sutch as logging, counter or put an ddecorator standard to all methods insite a class.
+Some useful decorators that you can use for different purposes such as logging, counter or put an decorator standard to all methods inside a class.
 
 # Instalation
 
