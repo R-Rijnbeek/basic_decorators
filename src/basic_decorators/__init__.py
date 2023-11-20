@@ -4,13 +4,17 @@ basic_decorators: Repository with usefull decorator methods
 """
 __author__  = "Robert Rijnbeek"
 __email__   = "robert270384@gmail.com"
-__version__ = "1.0.0"
+__version__ = "1.0.3"
 
 # ======== IMPORTS ===========
 
 from time import time 
 import json
 from functools import wraps
+
+# ======== GLOBAL OPTIONS ====
+
+global ARGUMENT_CHECK_ACTIVE = True
 
 # ======== DECORATORS ========
 
@@ -134,25 +138,31 @@ def argument_check(*types_args,**types_kwargs):
         - NO ERROR: A DEFINED EXCEPTION
 
     """
-    def check_accepts(f):
-        def function_wrapper(*args, **kwargs):
-            assert len(args) is len(types_args), f"In function '{f.__name__}{args}' and option values: {kwargs}, lenght of argumnets {args} is not the same as types_args {types_args}"
-            for (arg, type_arg) in zip(args, types_args):
-                if isinstance(type_arg,list):
-                    assert arg in type_arg, f"In function '{f.__name__}{args}' and option values: {kwargs}, argument {arg} is not in list {type_arg}" 
-                else:
-                    assert isinstance(arg, type_arg), f"In function '{f.__name__}{args}' and option values: {kwargs}, arg {arg} does not match {type_arg}" 
-            for kwarg,value in kwargs.items():
-                assert kwarg in types_kwargs , f"In function '{f.__name__}{args}' and option values: {kwargs}, the kwarg ('{kwarg}':{value}) is not a valid option value" 
-                espected_format = types_kwargs[kwarg]
-                if isinstance(espected_format,list): 
-                    assert value in espected_format, f"In function '{f.__name__}{args}' and option values: {kwargs}, the kwarg value ('{kwarg}':{value}) is not in list {espected_format}" 
-                else:
-                    assert isinstance(value, espected_format), f"In function '{f.__name__}{args}' and option values: {kwargs}, kwarg value ('{kwarg}':{value}) does not match with {espected_format}" 
-            return f(*args, **kwargs)
-        function_wrapper.__name__ = f.__name__
-        return function_wrapper
-    return check_accepts 
+    if(ARGUMENT_CHECK_ACTIVE):
+        def check_accepts(f):
+            def function_wrapper(*args, **kwargs):
+                assert len(args) is len(types_args), f"In function '{f.__name__}{args}' and option values: {kwargs}, lenght of argumnets {args} is not the same as types_args {types_args}"
+                for (arg, type_arg) in zip(args, types_args):
+                    if isinstance(type_arg,list):
+                        assert arg in type_arg, f"In function '{f.__name__}{args}' and option values: {kwargs}, argument {arg} is not in list {type_arg}" 
+                    else:
+                        assert isinstance(arg, type_arg), f"In function '{f.__name__}{args}' and option values: {kwargs}, arg {arg} does not match {type_arg}" 
+                for kwarg,value in kwargs.items():
+                    assert kwarg in types_kwargs , f"In function '{f.__name__}{args}' and option values: {kwargs}, the kwarg ('{kwarg}':{value}) is not a valid option value" 
+                    espected_format = types_kwargs[kwarg]
+                    if isinstance(espected_format,list): 
+                        assert value in espected_format, f"In function '{f.__name__}{args}' and option values: {kwargs}, the kwarg value ('{kwarg}':{value}) is not in list {espected_format}" 
+                    else:
+                        assert isinstance(value, espected_format), f"In function '{f.__name__}{args}' and option values: {kwargs}, kwarg value ('{kwarg}':{value}) does not match with {espected_format}" 
+                return f(*args, **kwargs)
+            function_wrapper.__name__ = f.__name__
+            return function_wrapper
+        return check_accepts 
+    else:
+        def check_accepts(f):
+            return f
+        return check_accepts
+        
 
 def type_arguments_for_all(TYPE,**types_kwargs):
     def check_accepts(f):
@@ -176,4 +186,3 @@ def type_arguments_for_all(TYPE,**types_kwargs):
 if __name__ == "__main__":
 
     pass
-
