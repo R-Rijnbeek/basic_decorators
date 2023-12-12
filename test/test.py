@@ -34,7 +34,6 @@ print(new_logger.info)
 print(json.dumps(new_logger.info,indent=4))
 print(json.dumps(statistic_logger.info,indent=4))
 
-
 """
 try:
     for i in range(1000):
